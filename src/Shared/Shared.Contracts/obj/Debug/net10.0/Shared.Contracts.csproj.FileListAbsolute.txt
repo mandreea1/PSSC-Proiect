@@ -1,0 +1,11 @@
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\bin\Debug\net10.0\Shared.Contracts.deps.json
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\bin\Debug\net10.0\Shared.Contracts.dll
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\bin\Debug\net10.0\Shared.Contracts.pdb
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\Shared.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\Shared.Contracts.AssemblyInfoInputs.cache
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\Shared.Contracts.AssemblyInfo.cs
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\Shared.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\Shared.Contracts.dll
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\refint\Shared.Contracts.dll
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\Shared.Contracts.pdb
+C:\Users\stefa\OneDrive\Desktop\IS-an4\PSSC\PSSC-Proiect\src\Shared\Shared.Contracts\obj\Debug\net10.0\ref\Shared.Contracts.dll
