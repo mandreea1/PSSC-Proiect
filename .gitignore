@@ -1,7 +1,29 @@
+# Build output
 **/bin/
 **/obj/
-.idea/
+
+# Visual Studio
+.vs/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / IntelliJ
+.idea/
+*.iml
+
+# .NET artifacts
+*.dll
+*.exe
+*.pdb
 *.cache
+*.deps.json
+*.runtimeconfig.json
+
+# Logs
 *.log
+
+# OS
+.DS_Store
+Thumbs.db
