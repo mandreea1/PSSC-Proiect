@@ -1,8 +1,21 @@
+using CustomTShirts.Events;
+using CustomTShirts.Events.ServiceBus;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddSingleton<IEventSender>(sp =>
+{
+    var cfg = sp.GetRequiredService<IConfiguration>();
+    var cs = cfg["ServiceBus:ConnectionString"]!;
+    var topic = cfg["ServiceBus:TopicName"]!;
+    return new ServiceBusTopicEventSender(cs, topic);
+});
+
 
 var app = builder.Build();
 

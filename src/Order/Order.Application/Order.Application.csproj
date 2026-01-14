@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Order.Domain\Order.Domain.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.Primitives\Shared.Primitives.csproj" />
+    <ProjectReference Include="..\..\Shared\CustomTShirts.Events\CustomTShirts.Events.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
