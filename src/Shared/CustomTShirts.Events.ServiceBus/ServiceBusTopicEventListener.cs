@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using CustomTShirts.Events;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomTShirts.Events.ServiceBus;
 
@@ -60,7 +61,8 @@ public sealed class ServiceBusTopicEventListener : IEventListener, IAsyncDisposa
         }
 
         var handlerType = typeof(IEventHandler<>).MakeGenericType(type);
-        var handler = _services.GetService(handlerType);
+        using var scope = _services.CreateScope();
+        var handler = scope.ServiceProvider.GetService(handlerType);
         if (handler is null)
         {
             await args.DeadLetterMessageAsync(args.Message, "HandlerNotFound", $"No handler registered for {subject}");

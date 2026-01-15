@@ -25,18 +25,21 @@ builder.Services.AddSingleton<IEventSender>(sp =>
 // Handler
 builder.Services.AddScoped<IEventHandler<InvoiceIssued>, ShipOrderOnInvoiceIssuedHandler>();
 
-// Listener
-builder.Services.AddSingleton<IEventListener>(sp =>
+// Listener (toggle via config)
+var enableListener = builder.Configuration.GetValue<bool>("EnableServiceBusListener", true);
+if (enableListener)
 {
-    var cfg = sp.GetRequiredService<IConfiguration>();
-    var sbCs = cfg["ServiceBus:ConnectionString"]!;
-    var topic = cfg["ServiceBus:TopicName"]!;
-    var subscription = cfg["ServiceBus:SubscriptionName"] ?? "shipping";
-    var map = new Dictionary<string, Type> { { nameof(InvoiceIssued), typeof(InvoiceIssued) } };
-    return new ServiceBusTopicEventListener(sbCs, topic, subscription, sp, map);
-});
-
-builder.Services.AddHostedService<EventListenerHostedService>();
+    builder.Services.AddSingleton<IEventListener>(sp =>
+    {
+        var cfg = sp.GetRequiredService<IConfiguration>();
+        var sbCs = cfg["ServiceBus:ConnectionString"]!;
+        var topic = cfg["ServiceBus:TopicName"]!;
+        var subscription = cfg["ServiceBus:SubscriptionName"] ?? "shipping";
+        var map = new Dictionary<string, Type> { { nameof(InvoiceIssued), typeof(InvoiceIssued) } };
+        return new ServiceBusTopicEventListener(sbCs, topic, subscription, sp, map);
+    });
+    builder.Services.AddHostedService<EventListenerHostedService>();
+}
 
 var app = builder.Build();
 
