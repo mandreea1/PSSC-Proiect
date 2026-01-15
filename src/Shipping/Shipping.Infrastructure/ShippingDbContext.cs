@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Shipping.Domain.Entities;
 using Shipping.Domain.ValueObjects;
 
@@ -24,5 +25,10 @@ public sealed class ShippingDbContext : DbContext
             owned.Property(a => a.City).HasColumnName("City").HasMaxLength(100);
             owned.Property(a => a.Country).HasColumnName("Country").HasMaxLength(2);
         });
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
 }

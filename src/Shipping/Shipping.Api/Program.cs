@@ -9,8 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 // Db
-var cs = builder.Configuration.GetConnectionString("Shipping") ?? "Data Source=shipping.db";
-builder.Services.AddDbContext<ShippingDbContext>(opts => opts.UseSqlite(cs));
+var cs = builder.Configuration.GetConnectionString("Shipping") 
+         ?? "Server=(localdb)\\MSSQLLocalDB;Database=ShippingDb;Trusted_Connection=True;TrustServerCertificate=True";
+builder.Services.AddDbContext<ShippingDbContext>(opts => opts.UseSqlServer(cs));
 
 // Events sender
 builder.Services.AddSingleton<IEventSender>(sp =>
@@ -44,11 +45,25 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// Ensure SQLite DB exists for quick local development
+// Lightweight Swagger UI via CDN for built-in OpenAPI
+app.MapGet("/swagger", () => Results.Content(@"<!DOCTYPE html>
+<html><head>
+<meta charset='UTF-8'>
+<title>Swagger UI</title>
+<link rel='stylesheet' href='https://unpkg.com/swagger-ui-dist@5/swagger-ui.css' />
+</head><body>
+<div id='swagger-ui'></div>
+<script src='https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js'></script>
+<script>
+ window.ui = SwaggerUIBundle({ url: '/openapi/v1.json', dom_id: '#swagger-ui' });
+</script>
+</body></html>", "text/html"));
+
+// Disabled HTTPS redirection for local simplicity; use HTTP ports in script
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ShippingDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 }
 
 app.MapGet("/shipments", async (ShippingDbContext db) =>
@@ -57,12 +72,21 @@ app.MapGet("/shipments", async (ShippingDbContext db) =>
     return Results.Ok(list);
 });
 
+app.MapGet("/", () => Results.Ok("Shipping API is running"));
+
 app.Run();
 
 sealed class EventListenerHostedService : IHostedService
 {
     private readonly IEventListener _listener;
-    public EventListenerHostedService(IEventListener listener) => _listener = listener;
-    public Task StartAsync(CancellationToken cancellationToken) => _listener.StartAsync(cancellationToken);
+    private readonly ILogger<EventListenerHostedService> _logger;
+    public EventListenerHostedService(IEventListener listener, ILogger<EventListenerHostedService> logger)
+    { _listener = listener; _logger = logger; }
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        try { await _listener.StartAsync(cancellationToken); }
+        catch (Exception ex)
+        { _logger.LogError(ex, "Failed to start Service Bus listener. API will continue to run."); }
+    }
     public Task StopAsync(CancellationToken cancellationToken) => _listener.StopAsync(cancellationToken);
 }

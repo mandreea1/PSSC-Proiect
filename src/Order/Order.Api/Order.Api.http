@@ -4,3 +4,13 @@ GET {{Order.Api_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+POST {{Order.Api_HostAddress}}/orders
+Content-Type: application/json
+
+{
+	"customerId": "00000000-0000-0000-0000-000000000001",
+	"total": 99.99
+}
+
+###

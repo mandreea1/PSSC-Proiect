@@ -1,0 +1,6 @@
+@Billing_Api = http://localhost:5295
+
+GET {{Billing_Api}}/invoices
+Accept: application/json
+
+###

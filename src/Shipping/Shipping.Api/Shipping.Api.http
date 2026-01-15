@@ -1,0 +1,6 @@
+@Shipping_Api = http://localhost:5296
+
+GET {{Shipping_Api}}/shipments
+Accept: application/json
+
+###
