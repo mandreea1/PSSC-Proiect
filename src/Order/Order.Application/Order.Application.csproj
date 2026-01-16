@@ -5,6 +5,7 @@
     <ProjectReference Include="..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.Primitives\Shared.Primitives.csproj" />
     <ProjectReference Include="..\..\Shared\CustomTShirts.Events\CustomTShirts.Events.csproj" />
+    <ProjectReference Include="..\Order.Infrastructure\Order.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
