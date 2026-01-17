@@ -13,6 +13,7 @@ public sealed class OrderDbContext : DbContext
         var o = modelBuilder.Entity<OrderEntity>();
         o.ToTable("Orders");
         o.HasKey(x => x.Id);
+        o.Property(x => x.Id).HasColumnType("nvarchar(450)");
         o.Property(x => x.CustomerId).IsRequired();
         o.Property(x => x.Total).HasColumnType("decimal(18,2)");
         o.Property(x => x.Status).HasConversion<int>();

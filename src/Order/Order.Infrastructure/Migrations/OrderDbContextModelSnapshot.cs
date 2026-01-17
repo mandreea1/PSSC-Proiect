@@ -24,9 +24,8 @@ namespace Order.Infrastructure.Migrations
 
             modelBuilder.Entity("Order.Infrastructure.OrderEntity", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");

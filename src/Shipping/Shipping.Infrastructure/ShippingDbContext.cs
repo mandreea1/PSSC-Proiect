@@ -15,6 +15,18 @@ public sealed class ShippingDbContext : DbContext
     {
         var shipment = modelBuilder.Entity<Shipment>();
         shipment.HasKey(s => s.Id);
+        
+        // Map ShipmentId value object to string in database
+        shipment.Property(s => s.Id)
+            .HasConversion(
+                id => id.Value,
+                value => new ShipmentId(value))
+            .HasColumnType("nvarchar(450)");
+        
+        // OrderId is semantic string reference to Order
+        shipment.Property(s => s.OrderId)
+            .HasColumnType("nvarchar(450)");
+        
         shipment.Property(s => s.OrderId).IsRequired();
         shipment.Property(s => s.CustomerId).IsRequired();
         shipment.Property(s => s.Status).HasConversion<int>();

@@ -15,6 +15,7 @@ public sealed class MarkOrderCompletedOnOrderShippedHandler : IEventHandler<Orde
 
     public async Task HandleAsync(OrderShipped @event, CancellationToken ct = default)
     {
+        // Match by semantic OrderId string
         var entity = await _db.Orders.FirstOrDefaultAsync(o => o.Id == @event.OrderId, ct);
         if (entity is null) return;
         entity.Status = 3; // Completed

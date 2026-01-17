@@ -15,6 +15,7 @@ public sealed class MarkOrderBilledOnInvoiceIssuedHandler : IEventHandler<Invoic
 
     public async Task HandleAsync(InvoiceIssued @event, CancellationToken ct = default)
     {
+        // Match by semantic OrderId string
         var entity = await _db.Orders.FirstOrDefaultAsync(o => o.Id == @event.OrderId, ct);
         if (entity is null) return;
         // Optional: set an intermediate status, or keep Placed until shipped

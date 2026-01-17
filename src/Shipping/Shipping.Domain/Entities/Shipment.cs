@@ -4,8 +4,8 @@ namespace Shipping.Domain.Entities;
 
 public sealed class Shipment
 {
-    public Guid Id { get; private set; }
-    public Guid OrderId { get; private set; }
+    public ShipmentId Id { get; private set; }
+    public string OrderId { get; private set; } = string.Empty;
     public Guid CustomerId { get; private set; }
     public Address Address { get; private set; } = new("Unknown", null, "Unknown", "RO");
     public ShipmentStatus Status { get; private set; } = ShipmentStatus.Pending;
@@ -13,9 +13,9 @@ public sealed class Shipment
 
     private Shipment() { }
 
-    public Shipment(Guid orderId, Guid customerId, Address address)
+    public Shipment(string orderId, Guid customerId, Address address)
     {
-        Id = Guid.NewGuid();
+        Id = ShipmentId.New();
         OrderId = orderId;
         CustomerId = customerId;
         Address = address;

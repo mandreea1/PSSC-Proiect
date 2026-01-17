@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = Host.CreateApplicationBuilder(args);
 
 // Db
-var cs = builder.Configuration.GetConnectionString("Billing") 
+var cs = builder.Configuration.GetConnectionString("DefaultConnection") 
          ?? "Server=(localdb)\\MSSQLLocalDB;Database=BillingDb;Trusted_Connection=True;TrustServerCertificate=True";
 builder.Services.AddDbContext<BillingDbContext>(opts => opts.UseSqlServer(cs));
 
@@ -19,7 +19,7 @@ builder.Services.AddDbContext<BillingDbContext>(opts => opts.UseSqlServer(cs));
 builder.Services.AddSingleton<IEventSender>(sp =>
 {
     var cfg = sp.GetRequiredService<IConfiguration>();
-    var sbCs = cfg["ServiceBus:ConnectionString"]!;
+    var sbCs = cfg.GetConnectionString("ServiceBus")!;
     var topic = cfg["ServiceBus:TopicName"]!;
     return new ServiceBusTopicEventSender(sbCs, topic);
 });
@@ -31,7 +31,7 @@ builder.Services.AddScoped<IEventHandler<OrderPlaced>, IssueInvoiceOnOrderPlaced
 builder.Services.AddSingleton<IEventListener>(sp =>
 {
     var cfg = sp.GetRequiredService<IConfiguration>();
-    var sbCs = cfg["ServiceBus:ConnectionString"]!;
+    var sbCs = cfg.GetConnectionString("ServiceBus")!;
     var topic = cfg["ServiceBus:TopicName"]!;
     var subscription = cfg["ServiceBus:SubscriptionName"] ?? "billing";
     var map = new Dictionary<string, Type> { { nameof(OrderPlaced), typeof(OrderPlaced) } };

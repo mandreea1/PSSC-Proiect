@@ -27,7 +27,7 @@ public sealed class ShipOrderOnOrderPlacedHandler : IEventHandler<OrderPlaced>
         _db.Shipments.Add(shipment);
         await _db.SaveChangesAsync(ct);
 
-        await _events.SendAsync(new OrderShipped(@event.OrderId, shipment.Id, @event.CustomerId), ct);
+        await _events.SendAsync(new OrderShipped(@event.OrderId, shipment.Id.Value, @event.CustomerId), ct);
         _logger.LogInformation("Published OrderShipped: OrderId={OrderId}, ShipmentId={ShipmentId}", @event.OrderId, shipment.Id);
     }
 }

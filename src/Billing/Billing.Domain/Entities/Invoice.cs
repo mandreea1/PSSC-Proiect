@@ -1,9 +1,11 @@
+using Billing.Domain.ValueObjects;
+
 namespace Billing.Domain.Entities;
 
 public sealed class Invoice
 {
-    public Guid Id { get; private set; }
-    public Guid OrderId { get; private set; }
+    public InvoiceId Id { get; private set; }
+    public string OrderId { get; private set; } = string.Empty;
     public Guid CustomerId { get; private set; }
     public decimal Amount { get; private set; }
     public string Currency { get; private set; } = "RON";
@@ -12,9 +14,9 @@ public sealed class Invoice
 
     private Invoice() { }
 
-    public Invoice(Guid orderId, Guid customerId, decimal amount, string currency = "RON")
+    public Invoice(string orderId, Guid customerId, decimal amount, string currency = "RON")
     {
-        Id = Guid.NewGuid();
+        Id = InvoiceId.New();
         OrderId = orderId;
         CustomerId = customerId;
         Amount = amount;
