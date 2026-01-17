@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 // Db
-var cs = builder.Configuration.GetConnectionString("Shipping") 
+var cs = builder.Configuration.GetConnectionString("DefaultConnection") 
          ?? "Server=(localdb)\\MSSQLLocalDB;Database=ShippingDb;Trusted_Connection=True;TrustServerCertificate=True";
 builder.Services.AddDbContext<ShippingDbContext>(opts => opts.UseSqlServer(cs));
 
@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ShippingDbContext>(opts => opts.UseSqlServer(cs));
 builder.Services.AddSingleton<IEventSender>(sp =>
 {
     var cfg = sp.GetRequiredService<IConfiguration>();
-    var sbCs = cfg["ServiceBus:ConnectionString"]!;
+    var sbCs = cfg.GetConnectionString("ServiceBus")!;
     var topic = cfg["ServiceBus:TopicName"]!;
     return new ServiceBusTopicEventSender(sbCs, topic);
 });
@@ -32,7 +32,7 @@ if (enableListener)
     builder.Services.AddSingleton<IEventListener>(sp =>
     {
         var cfg = sp.GetRequiredService<IConfiguration>();
-        var sbCs = cfg["ServiceBus:ConnectionString"]!;
+        var sbCs = cfg.GetConnectionString("ServiceBus")!;
         var topic = cfg["ServiceBus:TopicName"]!;
         var subscription = cfg["ServiceBus:SubscriptionName"] ?? "shipping";
         var map = new Dictionary<string, Type> { { nameof(InvoiceIssued), typeof(InvoiceIssued) } };

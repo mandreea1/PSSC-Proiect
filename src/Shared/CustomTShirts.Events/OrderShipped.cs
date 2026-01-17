@@ -1,3 +1,3 @@
 namespace CustomTShirts.Events;
 
-public sealed record OrderShipped(Guid OrderId, Guid ShipmentId, Guid CustomerId);
+public sealed record OrderShipped(string OrderId, string ShipmentId, Guid CustomerId);

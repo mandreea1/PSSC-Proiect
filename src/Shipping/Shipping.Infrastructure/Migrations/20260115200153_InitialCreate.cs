@@ -15,8 +15,8 @@ namespace Shipping.Infrastructure.Migrations
                 name: "Shipments",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Line1 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Line2 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),

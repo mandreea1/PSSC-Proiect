@@ -25,7 +25,7 @@ public sealed class IssueInvoiceOnOrderPlacedHandler : IEventHandler<OrderPlaced
         _db.Invoices.Add(invoice);
         await _db.SaveChangesAsync(ct);
 
-        await _events.SendAsync(new InvoiceIssued(@event.OrderId, invoice.Id, @event.CustomerId, @event.Total), ct);
+        await _events.SendAsync(new InvoiceIssued(@event.OrderId, invoice.Id.Value, @event.CustomerId, @event.Total), ct);
         _logger.LogInformation("Published InvoiceIssued: OrderId={OrderId}, InvoiceId={InvoiceId}", @event.OrderId, invoice.Id);
     }
 }

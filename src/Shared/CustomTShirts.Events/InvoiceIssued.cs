@@ -1,3 +1,3 @@
 namespace CustomTShirts.Events;
 
-public sealed record InvoiceIssued(Guid OrderId, Guid InvoiceId, Guid CustomerId, decimal Amount);
+public sealed record InvoiceIssued(string OrderId, string InvoiceId, Guid CustomerId, decimal Amount);

@@ -23,6 +23,6 @@ public sealed class ShipOrderOnInvoiceIssuedHandler : IEventHandler<InvoiceIssue
         _db.Shipments.Add(shipment);
         await _db.SaveChangesAsync(ct);
 
-        await _events.SendAsync(new OrderShipped(@event.OrderId, shipment.Id, @event.CustomerId), ct);
+        await _events.SendAsync(new OrderShipped(@event.OrderId, shipment.Id.Value, @event.CustomerId), ct);
     }
 }

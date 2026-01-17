@@ -3,6 +3,7 @@ using CustomTShirts.Events.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Order.Infrastructure;
 using Order.Application.Handlers;
+using Order.Domain.ValueObjects;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -17,15 +18,15 @@ builder.Services.AddOpenApi();
 // Order persistence: SQL Server LocalDB
 builder.Services.AddDbContext<OrderDbContext>(options =>
 {
-    var cs = builder.Configuration.GetConnectionString("OrderDb")
-             ?? throw new InvalidOperationException("Missing connection string 'OrderDb'");
+    var cs = builder.Configuration.GetConnectionString("DefaultConnection")
+             ?? throw new InvalidOperationException("Missing connection string 'DefaultConnection'");
     options.UseSqlServer(cs);
 });
 
 builder.Services.AddSingleton<IEventSender>(sp =>
 {
     var cfg = sp.GetRequiredService<IConfiguration>();
-    var cs = cfg["ServiceBus:ConnectionString"]!;
+    var cs = cfg.GetConnectionString("ServiceBus")!;
     var topic = cfg["ServiceBus:TopicName"]!;
     return new ServiceBusTopicEventSender(cs, topic);
 });
@@ -34,6 +35,9 @@ builder.Services.AddSingleton<IEventSender>(sp =>
 builder.Services.AddScoped<IEventHandler<InvoiceIssued>, MarkOrderBilledOnInvoiceIssuedHandler>();
 builder.Services.AddScoped<IEventHandler<OrderShipped>, MarkOrderCompletedOnOrderShippedHandler>();
 
+// Apply migrations on startup
+builder.Services.AddHostedService<ApplyMigrationsHostedService>();
+
 // Listener (toggle via config)
 var enableListener = builder.Configuration.GetValue<bool>("EnableServiceBusListener", false);
 if (enableListener)
@@ -41,7 +45,7 @@ if (enableListener)
     builder.Services.AddSingleton<IEventListener>(sp =>
     {
         var cfg = sp.GetRequiredService<IConfiguration>();
-        var sbCs = cfg["ServiceBus:ConnectionString"]!;
+        var sbCs = cfg.GetConnectionString("ServiceBus")!;
         var topic = cfg["ServiceBus:TopicName"]!;
         var subscription = cfg["ServiceBus:SubscriptionName"] ?? "order";
         var map = new Dictionary<string, Type>
@@ -106,11 +110,11 @@ app.MapGet("/", () => Results.Ok("Order API is running"));
 // Publish an OrderPlaced event for async workflows
 app.MapPost("/orders", async (PlaceOrderRequest req, OrderDbContext db, IEventSender events, CancellationToken ct) =>
 {
-    var orderId = Guid.NewGuid();
+    var orderId = OrderId.New();
     // Persist order as placed
     var entity = new OrderEntity
     {
-        Id = orderId,
+        Id = orderId.Value,
         CustomerId = req.CustomerId,
         Total = req.Total,
         Status = 1, // Placed
@@ -119,8 +123,8 @@ app.MapPost("/orders", async (PlaceOrderRequest req, OrderDbContext db, IEventSe
     db.Orders.Add(entity);
     await db.SaveChangesAsync(ct);
 
-    // Publish event
-    await events.SendAsync(new OrderPlaced(orderId, req.CustomerId, req.Total), ct);
+    // Publish event with semantic OrderId
+    await events.SendAsync(new OrderPlaced(orderId.Value, req.CustomerId, req.Total), ct);
     return Results.Accepted($"/orders/{orderId}");
 })
 .WithName("PlaceOrder");
@@ -150,6 +154,19 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 }
 
 public sealed record PlaceOrderRequest(Guid CustomerId, decimal Total);
+
+sealed class ApplyMigrationsHostedService : IHostedService
+{
+    private readonly IServiceProvider _sp;
+    public ApplyMigrationsHostedService(IServiceProvider sp) => _sp = sp;
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        using var scope = _sp.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+        await db.Database.MigrateAsync(cancellationToken);
+    }
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+}
 
 sealed class EventListenerHostedService : IHostedService
 {

@@ -13,7 +13,21 @@ public sealed class BillingDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Invoice>().HasKey(i => i.Id);
-        // rely on conventions for required properties
+        
+        // Map InvoiceId value object to string in database
+        modelBuilder.Entity<Invoice>()
+            .Property(i => i.Id)
+            .HasConversion(
+                id => id.Value,
+                value => new Billing.Domain.ValueObjects.InvoiceId(value))
+            .HasColumnType("nvarchar(450)");
+        
+        // OrderId is semantic string reference to Order
+        modelBuilder.Entity<Invoice>()
+            .Property(i => i.OrderId)
+            .HasColumnType("nvarchar(450)");
+        
+        // Other configurations
         modelBuilder.Entity<Invoice>().Property(i => i.Status).HasConversion<int>();
         modelBuilder.Entity<Invoice>().Property(i => i.Amount).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<Invoice>().Property(i => i.Currency).HasMaxLength(3);
