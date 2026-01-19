@@ -18,11 +18,16 @@ public sealed class ServiceBusTopicEventSender : IEventSender, IAsyncDisposable
     public async Task SendAsync<T>(T @event, CancellationToken ct = default) where T : class
     {
         var json = JsonSerializer.Serialize(@event);
+        var eventType = typeof(T).Name;
 
         var msg = new ServiceBusMessage(json)
         {
-            Subject = typeof(T).Name
+            Subject = eventType
         };
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"[SERVICE BUS] ✉️  SENDING: {eventType}");
+        Console.ResetColor();
 
         await _sender.SendMessageAsync(msg, ct);
     }

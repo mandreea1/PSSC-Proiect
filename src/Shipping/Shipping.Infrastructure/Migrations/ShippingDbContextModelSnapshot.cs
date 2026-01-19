@@ -37,8 +37,9 @@ namespace Shipping.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -49,8 +50,8 @@ namespace Shipping.Infrastructure.Migrations
                 {
                     b.OwnsOne("Shipping.Domain.ValueObjects.Address", "Address", b1 =>
                         {
-                            b1.Property<Guid>("ShipmentId")
-                                .HasColumnType("uniqueidentifier");
+                            b1.Property<string>("ShipmentId")
+                                .HasColumnType("nvarchar(450)");
 
                             b1.Property<string>("City")
                                 .IsRequired()

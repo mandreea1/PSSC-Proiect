@@ -29,7 +29,7 @@ public sealed class ShippingDbContext : DbContext
         
         shipment.Property(s => s.OrderId).IsRequired();
         shipment.Property(s => s.CustomerId).IsRequired();
-        shipment.Property(s => s.Status).HasConversion<int>();
+        shipment.Property(s => s.Status).IsRequired();
         shipment.OwnsOne(s => s.Address, owned =>
         {
             owned.Property(a => a.Line1).HasColumnName("Line1").HasMaxLength(200);

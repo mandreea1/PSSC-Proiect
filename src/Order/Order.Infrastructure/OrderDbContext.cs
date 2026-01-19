@@ -15,8 +15,9 @@ public sealed class OrderDbContext : DbContext
         o.HasKey(x => x.Id);
         o.Property(x => x.Id).HasColumnType("nvarchar(450)");
         o.Property(x => x.CustomerId).IsRequired();
-        o.Property(x => x.Total).HasColumnType("decimal(18,2)");
-        o.Property(x => x.Status).HasConversion<int>();
+        o.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+        o.Property(x => x.Status).IsRequired();
+        o.Property(x => x.CustomText).IsRequired();
         o.Property(x => x.CreatedAt).HasColumnType("datetime2");
     }
 }

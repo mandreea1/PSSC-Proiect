@@ -21,7 +21,7 @@ public sealed class ShipOrderOnOrderPlacedHandler : IEventHandler<OrderPlaced>
 
     public async Task HandleAsync(OrderPlaced @event, CancellationToken ct = default)
     {
-        _logger.LogInformation("Handling OrderPlaced in Shipping: OrderId={OrderId}, CustomerId={CustomerId}, Total={Total}", @event.OrderId, @event.CustomerId, @event.Total);
+        _logger.LogInformation("Handling OrderPlaced in Shipping: OrderId={OrderId}, CustomerId={CustomerId}, Amount={Amount}", @event.OrderId, @event.CustomerId, @event.Amount);
         var shipment = new Shipment(@event.OrderId, @event.CustomerId, new Address("Bd. Unirii 1", null, "Bucuresti", "RO"));
         shipment.MarkShipped();
         _db.Shipments.Add(shipment);
