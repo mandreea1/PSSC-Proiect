@@ -2,7 +2,8 @@
 
 ## Echipa
 
-• Andreea
+• Andreea Mîțiu
+• Ștefan Oleniuc
 
 ## Domeniul Ales
 
