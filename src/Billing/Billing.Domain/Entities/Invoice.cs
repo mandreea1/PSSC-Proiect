@@ -9,7 +9,7 @@ public sealed class Invoice
     public Guid CustomerId { get; private set; }
     public decimal Amount { get; private set; }
     public string Currency { get; private set; } = "RON";
-    public InvoiceStatus Status { get; private set; } = InvoiceStatus.Draft;
+    public string Status { get; private set; } = "Draft";
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     private Invoice() { }
@@ -21,6 +21,8 @@ public sealed class Invoice
         CustomerId = customerId;
         Amount = amount;
         Currency = currency;
-        Status = InvoiceStatus.Issued;
+        Status = "Draft";
     }
+
+    public void MarkIssued() => Status = "Issued";
 }

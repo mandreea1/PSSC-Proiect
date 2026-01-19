@@ -12,8 +12,8 @@ using Shipping.Infrastructure;
 namespace Shipping.Infrastructure.Migrations
 {
     [DbContext(typeof(ShippingDbContext))]
-    [Migration("20260115200153_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260119203234_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,8 @@ namespace Shipping.Infrastructure.Migrations
 
             modelBuilder.Entity("Shipping.Domain.Entities.Shipment", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -37,11 +36,13 @@ namespace Shipping.Infrastructure.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("OrderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -52,8 +53,8 @@ namespace Shipping.Infrastructure.Migrations
                 {
                     b.OwnsOne("Shipping.Domain.ValueObjects.Address", "Address", b1 =>
                         {
-                            b1.Property<Guid>("ShipmentId")
-                                .HasColumnType("uniqueidentifier");
+                            b1.Property<string>("ShipmentId")
+                                .HasColumnType("nvarchar(450)");
 
                             b1.Property<string>("City")
                                 .IsRequired()

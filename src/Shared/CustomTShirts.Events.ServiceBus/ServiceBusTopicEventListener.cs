@@ -46,6 +46,11 @@ public sealed class ServiceBusTopicEventListener : IEventListener, IAsyncDisposa
     private async Task OnMessageAsync(ProcessMessageEventArgs args)
     {
         var subject = args.Message.Subject;
+        
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"[SERVICE BUS] 📩 RECEIVED: {subject}");
+        Console.ResetColor();
+        
         if (subject is null || !_subjectTypeMap.TryGetValue(subject, out var type))
         {
             await args.CompleteMessageAsync(args.Message);

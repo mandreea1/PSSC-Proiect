@@ -8,7 +8,7 @@ public sealed class Shipment
     public string OrderId { get; private set; } = string.Empty;
     public Guid CustomerId { get; private set; }
     public Address Address { get; private set; } = new("Unknown", null, "Unknown", "RO");
-    public ShipmentStatus Status { get; private set; } = ShipmentStatus.Pending;
+    public string Status { get; private set; } = "Pending";
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     private Shipment() { }
@@ -19,8 +19,8 @@ public sealed class Shipment
         OrderId = orderId;
         CustomerId = customerId;
         Address = address;
-        Status = ShipmentStatus.Pending;
+        Status = "Pending";
     }
 
-    public void MarkShipped() => Status = ShipmentStatus.Shipped;
+    public void MarkShipped() => Status = "Shipped";
 }

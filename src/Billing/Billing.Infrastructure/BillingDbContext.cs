@@ -28,7 +28,7 @@ public sealed class BillingDbContext : DbContext
             .HasColumnType("nvarchar(450)");
         
         // Other configurations
-        modelBuilder.Entity<Invoice>().Property(i => i.Status).HasConversion<int>();
+        modelBuilder.Entity<Invoice>().Property(i => i.Status).IsRequired();
         modelBuilder.Entity<Invoice>().Property(i => i.Amount).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<Invoice>().Property(i => i.Currency).HasMaxLength(3);
     }

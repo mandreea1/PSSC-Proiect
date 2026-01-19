@@ -2,7 +2,6 @@ using CustomTShirts.Events;
 using CustomTShirts.Events.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Order.Infrastructure;
-using Order.Application.Handlers;
 using Order.Domain.ValueObjects;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -30,10 +29,6 @@ builder.Services.AddSingleton<IEventSender>(sp =>
     var topic = cfg["ServiceBus:TopicName"]!;
     return new ServiceBusTopicEventSender(cs, topic);
 });
-
-// Order subscribers (aggregate status)
-builder.Services.AddScoped<IEventHandler<InvoiceIssued>, MarkOrderBilledOnInvoiceIssuedHandler>();
-builder.Services.AddScoped<IEventHandler<OrderShipped>, MarkOrderCompletedOnOrderShippedHandler>();
 
 // Apply migrations on startup
 builder.Services.AddHostedService<ApplyMigrationsHostedService>();
@@ -90,20 +85,31 @@ app.MapGet("/", () => Results.Ok("Order API is running"));
 app.MapPost("/orders", async (PlaceOrderRequest req, OrderDbContext db, IEventSender events, CancellationToken ct) =>
 {
     var orderId = OrderId.New();
+    
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine($"[ORDER] 📝 Creating order with custom text: '{req.CustomText}'");
+    Console.ResetColor();
+    
     // Persist order as placed
     var entity = new OrderEntity
     {
         Id = orderId.Value,
         CustomerId = req.CustomerId,
-        Total = req.Total,
-        Status = 1, // Placed
+        Amount = req.Amount,
+        CustomText = req.CustomText,
+        Status = "Placed",
         CreatedAt = DateTime.UtcNow
     };
     db.Orders.Add(entity);
     await db.SaveChangesAsync(ct);
+    
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine($"[ORDER] ✅ Order {orderId.Value} saved with Status: {entity.Status}");
+    Console.WriteLine($"[ORDER] 📤 Publishing OrderPlaced event...");
+    Console.ResetColor();
 
     // Publish event with semantic OrderId
-    await events.SendAsync(new OrderPlaced(orderId.Value, req.CustomerId, req.Total), ct);
+    await events.SendAsync(new OrderPlaced(orderId.Value, req.CustomerId, req.Amount), ct);
     return Results.Accepted($"/orders/{orderId}");
 })
 .WithName("PlaceOrder");
@@ -127,7 +133,7 @@ app.MapGet("/orders/{id}", async (Guid id, OrderDbContext db, CancellationToken 
 
 app.Run();
 
-public sealed record PlaceOrderRequest(Guid CustomerId, decimal Total);
+public sealed record PlaceOrderRequest(Guid CustomerId, decimal Amount = 1, string CustomText = "");
 
 sealed class ApplyMigrationsHostedService : IHostedService
 {
