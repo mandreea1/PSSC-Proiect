@@ -84,27 +84,6 @@ app.MapGet("/swagger", () => Results.Content(@"<!DOCTYPE html>
  </script>
 </body></html>", "text/html"));
 
-// Disabled for local simplicity; use HTTP during dev script run
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
 app.MapGet("/", () => Results.Ok("Order API is running"));
 
 // Publish an OrderPlaced event for async workflows
@@ -147,11 +126,6 @@ app.MapGet("/orders/{id}", async (Guid id, OrderDbContext db, CancellationToken 
 .WithName("GetOrderById");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
 
 public sealed record PlaceOrderRequest(Guid CustomerId, decimal Total);
 
